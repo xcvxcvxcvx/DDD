@@ -5,8 +5,12 @@
   "license": "MIT",
   "private": true,
   "main": "main.js",
+  "scripts": {
+    "lint": "eslint -c .eslintrc.json --color"
+  },
   "dependencies": {
     "pg": "^8.8.0",
+    "pino": "^8.7.0",
     "ws": "^8.8.1"
   }
 }

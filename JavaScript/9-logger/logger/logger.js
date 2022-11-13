@@ -15,12 +15,13 @@ const COLORS = {
 const DATETIME_LENGTH = 19;
 
 class Logger {
-  constructor(logPath) {
+  constructor(logPath, logger) {
     this.path = logPath;
     const date = new Date().toISOString().substring(0, 10);
     const filePath = path.join(logPath, `${date}.log`);
     this.stream = fs.createWriteStream(filePath, { flags: 'a' });
     this.regexp = new RegExp(path.dirname(this.path), 'g');
+    this.logger = logger;
   }
 
   close() {
@@ -32,7 +33,9 @@ class Logger {
     const date = now.substring(0, DATETIME_LENGTH);
     const color = COLORS[type];
     const line = date + '\t' + s;
-    console.log(color + line + '\x1b[0m');
+
+    this.logger.info(color + line + '\x1b[0m');
+
     const out = line.replace(/[\n\r]\s*/g, '; ') + '\n';
     this.stream.write(out);
   }
@@ -48,7 +51,7 @@ class Logger {
   }
 
   debug(...args) {
-    const msg = util.format(...args);
+        const msg = util.format(...args);
     this.write('debug', msg);
   }
 
@@ -68,4 +71,11 @@ class Logger {
   }
 }
 
-module.exports = new Logger('./log');
+const map = {
+  console: console,
+  pino: require('pino')(),
+}
+
+module.exports = (logger) => {
+  return new Logger('./log', map[logger]);
+}

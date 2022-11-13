@@ -2,15 +2,14 @@
 
 const pg = require('pg');
 
-const pool = new pg.Pool({
-  host: '127.0.0.1',
-  port: 5432,
-  database: 'example',
-  user: 'marcus',
-  password: 'marcus',
-});
+let pool = null;
 
-module.exports = (table) => ({
+const init = (options) => {
+  pool = new pg.Pool(options);
+};
+
+
+const crud = (table) => ({
   query(sql, args) {
     return pool.query(sql, args);
   },
@@ -57,3 +56,5 @@ module.exports = (table) => ({
     return pool.query(sql, [id]);
   },
 });
+
+module.exports = { init, crud };
